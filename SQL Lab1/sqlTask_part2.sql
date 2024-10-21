@@ -9,7 +9,7 @@ from Departments,employee
 SELECT pname,plocation,Dnum
 FROM Project
 
-select Fname + ' '+ Lname as [full name],(salary*10/100)AS [ANNUAL COMM]
+select Fname + ' '+ Lname as [full name],(0.1*salary*12)AS [ANNUAL COMM]
 from employee
 
 SELECT SSN,Fname + ' '+ Lname as [full name]
@@ -18,7 +18,7 @@ where Salary>1000
 
 SELECT SSN,Fname + ' '+ Lname as [full name]
 from employee
-where Salary>10000
+where Salary*12>10000
 
 SELECT Fname + ' '+ Lname as [full name],Salary
 from employee
