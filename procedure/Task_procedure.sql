@@ -48,7 +48,7 @@ UPDATE Project
 SET Budget = 1000
 
 
-  --then Create an Audit table with the following structure
+
   create table Audit
   (
 	ProjectNo  int,
@@ -59,8 +59,7 @@ SET Budget = 1000
 	Budget_New int
   )
 
-  --This table will be used to audit the update trials on the Budget column
-  --(Project table, Company DB)
+
   create trigger insertAudit
   on project
   after update
@@ -110,6 +109,16 @@ end
 
 --7
 use ITI
+
+
+create table Audit
+  (
+	
+	UserName nvarchar(100) ,
+	Dates date,
+    Note  nvarchar(40)
+  )
+
 
 
 
