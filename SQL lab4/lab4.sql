@@ -97,10 +97,67 @@ select * from GetNameManage(1)
 
  
 
+ Create Function dbo.GetNamestud(@name nvarchar(50)) 
+Returns @names table (Names nvarchar(50))
+as
+Begin
+if @name ='first name'
+insert into @names (Names) select isnull(St_Fname,'is null') from student
+else if @name='last name'
+insert into @names(Names) select isnull(St_Lname,'is null') from Student 
+else if @name='full name'insert into @names (Names) select isnull(concat(st_fname, ' ', st_lname), 'full name null') 
+from student
+return 
+end
+
+select * from GetNamestud('full name')
+
+--7
+ use Company_SD
+ declare c1 cursor
+ for select SSN,Salary from Employee
+for read only
+declare @ID int,@Salary int
+open c1
+fetch next from c1 into @ID,@Salary
+while @@FETCH_STATUS=0
+begin
+	if @Salary >= 3000
+        select @ID as SSN, @Salary * 1.1 as Salary;
+    else
+        select @ID as SSN, @Salary * 1.2 as Salary;
+
+    fetch next from c1 into @ID, @Salary;
+end
+close C1
+Deallocate C1
+
+--8 Display Department name with its manager name using cursor.  
+ use Company_SD
+ declare c2 cursor
+ for select d.Dname,e.Fname from Departments d inner join   Employee e on d.MGRSSN=e.SSN
+for read only
+ open c2
+ declare @dept_name nvarchar(20)
+ declare @manageName nvarchar(20)
+ fetch next from c2 into @dept_name,@manageName
+ while @@FETCH_STATUS=0
+begin
+
+select @dept_name as 'Department name',@manageName as 'Manager name'
+ fetch next from c2 into @dept_name,@manageName
+ end
+ close C2
+Deallocate C2
 
 
 
 
 
 
- 
+--9 Try to display all instructor names in one cell separated by comma
+
+use ITI
+
+ SELECT STRING_AGG(Ins_Name, ', ') AS 'instructors Names'
+FROM instructor
