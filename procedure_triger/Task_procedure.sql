@@ -114,34 +114,10 @@ use ITI
 create table Audit
   (
 	
-	UserName nvarchar(100) ,
-	Dates date,
-    Note  nvarchar(40)
+     ServerUserName NVARCHAR(100),
+    InsertDate DATETIME,
+    Note NVARCHAR(255)
   )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -154,22 +130,32 @@ BEGIN
     DECLARE @currentDate DATETIME = GETDATE()
 
   
-    INSERT INTO StudentAudit (ServerUserName, InsertDate, Note)
+    INSERT INTO Audit (ServerUserName, InsertDate, Note)
     select 
         @currentUser, 
         @currentDate,
-        'User ' + @currentUser + ' Inserted New Row with Key=' + CAST(St_Id as nvarchar(10)) + ' in table [Student]' --cast convert id integer to char
+       '[' + @currentUser + '] Insert New Row with Key=[' + CAST(i.St_Id AS NVARCHAR(10)) + '] in table [Student]'--cast convert id integer to char
     from 
-        inserted
+        inserted i
 END
-
-
 
 
 
 --8
 create trigger delete_Row  
 on Student 
-after insert
+INSTEAD OF DELETE
 as
 BEGIN
+ DECLARE @currentUser nvarchar(128) = ORIGINAL_LOGIN() 
+ DECLARE @currentDate DATETIME = GETDATE()
+  INSERT INTO Audit (ServerUserName, InsertDate, Note)
+    select 
+        @currentUser, 
+        @currentDate,
+		'Try to delete Row with Key=[' + CAST(i.St_Id AS NVARCHAR(10)) + ']'
+		   FROM 
+        deleted i
+		DELETE FROM Student
+    WHERE St_Id IN (SELECT St_Id FROM deleted)
+	end 
